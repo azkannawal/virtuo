@@ -1,0 +1,53 @@
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #040714;
+  color: #f9f9f9;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: #f9f9f9;
+  text-decoration: none;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+.custom-input::placeholder {
+  color: white;
+  opacity: 80%;
+}
+
+
+@media only screen and (min-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+}
+@media only screen and (min-width: 480x) and(max-width: 768x) {
+  body {
+    font-size: 15px;
+  }
+}
+@media only screen and (min-width: 479px) {
+  body {
+    font-size: 14px;
+  }
+}
