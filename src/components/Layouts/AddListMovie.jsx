@@ -12,10 +12,14 @@ const MovieList = ({ title, getMovies }) => {
   useEffect(() => {
     getMovies((data) => {
       setMovies(data);
-      console.log(data);
-      setLoading(false);
     });
   }, [getMovies]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  }, []);
 
   let settings = {
     slidesToShow: 6,
@@ -46,7 +50,9 @@ const MovieList = ({ title, getMovies }) => {
       <Caraousel {...settings}>
         {loading
           ? Array.from({ length: 18 }).map((_, index) => (
-              <LoadingWrap key={index}></LoadingWrap>
+              <LoadingWrap key={index}>
+                <img src="/images/posterloading.png" alt="" />
+              </LoadingWrap>
             ))
           : movies.slice(0, 18).map((item) => (
               <Wrap key={item.id}>
@@ -79,23 +85,21 @@ const Caraousel = styled(Slider)`
   }
 `;
 const Wrap = styled.div`
+  cursor: pointer;
   width: 100%;
   max-width: 200px;
+  border-radius: 8px;
+  box-shadow: rgb(0 0 0 / 69%) 0px 26px 30px -10px,
+    rgb(0 0 0 / 73%) 0px 16px 10px -10px;
+  transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+  border: 3px solid rgba(249, 249, 249, 0.1);
   @media (max-width: 768px) {
     max-width: 160px;
   }
   @media (max-width: 480px) {
     max-width: 115px;
-  }
-  cursor: pointer;
-  border-radius: 8px;
-  @media (max-width: 480px) {
     border: 2px solid rgba(249, 249, 249, 0.1);
   }
-  box-shadow: rgb(0 0 0 / 69%) 0px 26px 30px -10px,
-    rgb(0 0 0 / 73%) 0px 16px 10px -10px;
-  transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
-  border: 3px solid rgba(249, 249, 249, 0.1);
   img {
     width: 100%;
     transition: opacity 500ms ease-in-out 0s;
@@ -109,11 +113,27 @@ const Wrap = styled.div`
   }
 `;
 const LoadingWrap = styled.div`
-  border-radius: 8px;
-  margin: 1em;
-  height: 0;
-  padding-bottom: 100%;
   background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 200px;
+  border-radius: 8px;
+  box-shadow: rgb(0 0 0 / 69%) 0px 26px 30px -10px,
+    rgb(0 0 0 / 73%) 0px 16px 10px -10px;
+  transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+  border: 3px solid rgba(249, 249, 249, 0.1);
+  @media (max-width: 768px) {
+    max-width: 160px;
+  }
+  @media (max-width: 480px) {
+    max-width: 115px;
+    border: 2px solid rgba(249, 249, 249, 0.1);
+  }
+  img {
+    width: 100%;
+    opacity: 0;
+    transition: opacity 500ms ease-in-out 0s;
+    border-radius: 6px;
+  }
   animation: loading 1.5s infinite;
 
   @keyframes loading {

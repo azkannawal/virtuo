@@ -2,8 +2,10 @@ import styled from "styled-components";
 import ImgSlider from "./../components/Fragments/ImgSlider";
 import MovieList from "../components/Layouts/AddListMovie";
 import { getNewRelease, getPopular, getTopRated} from "../api";
+import useLogin from "../hooks/useLogin";
 
 const HomePage = () => {
+  useLogin();
   return (
     <Container>
       <ImgSlider />

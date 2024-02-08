@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getDetailMovie, getTrailer, postRating } from "../api";
 import app from "./../config/firebase";
+import { getDetailMovie, getTrailer } from "../api";
 import { selectUserUID } from "../features/user/userSlice";
 import { useSelector } from "react-redux";
 import { getDatabase, ref, push, child, remove, get } from "firebase/database";
 import InputTracked from "./../components/Fragments/InputTracked";
-import { a } from "../components/Layouts/AddHeader";
+import useLogin from "../hooks/useLogin";
 const database = getDatabase(app);
 
 const DetailPage = () => {
@@ -15,26 +15,22 @@ const DetailPage = () => {
   const [detail, setDetail] = useState({});
   const [trailer, setTrailer] = useState({});
   const [inList, setInList] = useState(false);
-  const [rating, setRating] = useState({});
+  const user = useSelector(selectUserUID);
   const year = new Date(detail.release_date).getFullYear().toString();
   const duration = Math.floor(detail.runtime / 60);
   const remaining = detail.runtime % 60;
-  const user = useSelector(selectUserUID);
+  const votecount =
+    detail.vote_count >= 1000
+      ? (detail.vote_count / 1000).toFixed(1) + "K"
+      : detail.vote_count;
+  useLogin();
 
-  const handleRatingChange = (event) => {
-    setRating(event.target.value);
-  };
-
-  const handleSubmitRating = async () => {
-    if (rating !== "") {
-      await postRating(id, rating, a);
-      console.log(a);
-      console.log(id);
-      console.log(rating);
-    } else {
-      alert("Please enter a rating");
-    }
-  };
+  useEffect(() => {
+    getDetailMovie(id, (data) => {
+      setDetail(data);
+      console.log(data);
+    });
+  }, [id]);
 
   useEffect(() => {
     if (user !== null) {
@@ -103,12 +99,6 @@ const DetailPage = () => {
   };
 
   useEffect(() => {
-    getDetailMovie(id, (data) => {
-      setDetail(data);
-    });
-  }, [id]);
-
-  useEffect(() => {
     getTrailer(id, (data) => {
       const official = data.results.find(
         (trailer) => trailer.name === "Official Trailer"
@@ -145,20 +135,20 @@ const DetailPage = () => {
       }}
     >
       <Container>
-        <Background>
+        <Backdrop>
           <img
             src={`https://image.tmdb.org/t/p/w1280/${detail.backdrop_path}`}
             alt={detail.title}
           />
-        </Background>
+        </Backdrop>
         <Content>
-          <ImgTitle>
+          <Poster>
             <img
               src={`https://image.tmdb.org/t/p/w500/${detail.poster_path}`}
               alt={detail.title}
             />
-          </ImgTitle>
-          <ContentMeta>
+          </Poster>
+          <Wrap>
             <Title>{detail.title}</Title>
             <Info>
               <span>{`${year}`}</span>
@@ -201,18 +191,13 @@ const DetailPage = () => {
                 </AddList>
               )}
             </Controls>
-            <Description onClick={handleDeleteFromList}>
-              {detail.overview}
-            </Description>
-            <input
-              type="number"
-              placeholder="Enter rating (out of 10)"
-              value={rating}
-              onChange={handleRatingChange}
-            />
-            <button onClick={handleSubmitRating}>Submit Rating</button>
+            {/* <Rating>
+              <img src="/images/rating.svg" alt="" />
+              <span>{`${parseFloat(detail.vote_average).toFixed(1)}/10`}</span>
+            </Rating> */}
+            <Description>{detail.overview}</Description>
             <InputTracked />
-          </ContentMeta>
+          </Wrap>
         </Content>
       </Container>
     </div>
@@ -226,7 +211,7 @@ const Container = styled.div`
   padding: 84px calc(4.5vw + 5px) 0;
   margin: 0px 0px;
 `;
-const Background = styled.div`
+const Backdrop = styled.div`
   left: 0px;
   opacity: 0.2;
   position: fixed;
@@ -251,7 +236,7 @@ const Content = styled.div`
     gap: 0;
   }
 `;
-const ImgTitle = styled.div`
+const Poster = styled.div`
   min-height: 170px;
   img {
     max-width: 350px;
@@ -270,7 +255,8 @@ const ImgTitle = styled.div`
     }
   }
 `;
-const ContentMeta = styled.div`
+const Wrap = styled.div`
+  position: relative;
   max-width: 1000px;
   display: flex;
   flex-direction: column;
@@ -283,7 +269,7 @@ const Title = styled.div`
     font-size: 36px;
   }
 `;
-const Info = styled.div`
+const Info = styled.p`
   display: flex;
   margin: 8px 0 16px;
   span {
@@ -342,7 +328,7 @@ const Trailer = styled(Player)`
   border: 1px solid rgb(249, 249, 249);
   color: rgb(249, 249, 249);
 `;
-const AddList = styled.div`
+const AddList = styled.button`
   height: 44px;
   width: 44px;
   display: flex;

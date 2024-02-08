@@ -13,11 +13,11 @@ const SearchComponent = ({}) => {
   useEffect(() => {
     const handleSearch = async () => {
       try {
-        if (isFocused & searchQuery.length > 0) {
+        if (isFocused & (searchQuery.length > 0)) {
           const query = await searchMovie(searchQuery);
           dispatch(setSearchResult(query));
           navigate("/results");
-        } else if (isFocused & searchQuery.length == 0) {
+        } else if (isFocused & (searchQuery.length == 0)) {
           navigate("/home");
         }
       } catch (error) {

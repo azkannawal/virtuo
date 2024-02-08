@@ -8,9 +8,11 @@ import SearchComponent from "./SearchComponent";
 import {
   selectUserName,
   selectUserPhoto,
+  setGuestSessionId,
   setSignOutState,
   setUserLoginDetails,
 } from "../../features/user/userSlice";
+import { getGuest } from "../../api";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -21,28 +23,39 @@ const Header = () => {
   const [dropdown, setDropdown] = useState(false);
 
   const handleDropdown = () => {
-    setDropdown(!dropdown);
+    if (dropdown) {
+      setDropdown(false);
+    } else {
+      setDropdown(true);
+    }
   };
+
+  useEffect(() => {
+    setDropdown(false);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
       if (offset > 15) {
         setScrolled(true);
+        setDropdown(false);
       } else {
         setScrolled(false);
+        setDropdown(false);
       }
     };
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [scrolled]);
 
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         setUser(user);
+        navigate("/home");
       }
     });
   }, [userName]);
@@ -52,7 +65,6 @@ const Header = () => {
       try {
         await signInWithPopup(auth, provider).then((result) => {
           setUser(result.user);
-          console.log(result.user);
           navigate("/home");
         });
       } catch (err) {
@@ -68,6 +80,7 @@ const Header = () => {
         console.error(err);
       }
     }
+    setDropdown(false);
   };
 
   const setUser = (user) => {
@@ -81,6 +94,28 @@ const Header = () => {
     );
   };
 
+  const handleSession = () => {
+    const guestSessionId = localStorage.getItem("guestSessionId");
+    if (!guestSessionId) {
+      getGuest((data) => {
+        dispatch(setGuestSessionId(data.guest_session_id));
+        localStorage.setItem("guestSessionId", data.guest_session_id);
+      });
+    }
+  };
+
+  useEffect(() => {
+    const storedGuestSessionId = localStorage.getItem("guestSessionId");
+    if (storedGuestSessionId) {
+      dispatch(setGuestSessionId(storedGuestSessionId));
+    }
+  }, []);
+
+  const handleAll = () => {
+    handleAuth();
+    handleSession();
+  };
+
   return (
     <Container className={scrolled ? "scrolled" : ""}>
       <Logo>
@@ -88,7 +123,7 @@ const Header = () => {
       </Logo>
       {!userName ? (
         <>
-          <Login onClick={handleAuth}>SIGN IN</Login>
+          <Login onClick={handleAll}>SIGN IN</Login>
         </>
       ) : (
         <>
@@ -99,7 +134,7 @@ const Header = () => {
             </Link>
             <Link to="/tracked">
               <img src="/images/original-icon.svg" alt="watchlist" />
-              <span>TRACKED</span>
+              <span>REVIEWS</span>
             </Link>
             <Link to="/watchlist">
               <img src="/images/iswatchlist.png" alt="watchlist" />
@@ -110,16 +145,23 @@ const Header = () => {
             <SearchComponent />
             <UserImg onClick={handleDropdown} src={userPhoto} alt={userName} />
             {dropdown && (
-              <DropDown>
-                <Link to="/profile" className="profile">
+              <DropDown
+                onMouseLeave={() => setDropdown(false)}
+                onPointerLeave={() => setDropdown(false)}
+              >
+                <Link
+                  to="/profile"
+                  onClick={handleDropdown}
+                  className="profile"
+                >
                   <img src="/images/group-icon.png" alt="watchlist" />
                   <p>PROFILE</p>
                 </Link>
-                <Link to="/tracked" className="menu">
+                <Link to="/tracked" onClick={handleDropdown} className="menu">
                   <img src="/images/original-icon.svg" alt="tracked" />
-                  <p>TRACKED</p>
+                  <p>REVIEWS</p>
                 </Link>
-                <Link to="/watchlist" className="menu">
+                <Link to="/watchlist" onClick={handleDropdown} className="menu">
                   <img src="/images/iswatchlist.png" alt="watchlist" />
                   <p>WATCHLIST</p>
                 </Link>

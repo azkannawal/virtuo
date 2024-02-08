@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import useLogin from "../hooks/useLogin";
 
 const ResultPage = (props) => {
   const [movie, setMovie] = useState([]);
   const searchResult = useSelector((state) => state.search.searchResult) || {
     results: [],
   };
+  useLogin();
 
   useEffect(() => {
     const filteredMovies = searchResult.results.filter(
