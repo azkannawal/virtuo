@@ -1,4 +1,4 @@
-import "./index.css"; //ha
+import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import React from "react";
@@ -11,7 +11,8 @@ import ResultPage from "./pages/results";
 import NotFoundPage from "./pages/notfound";
 import AddHeader from "./components/Layouts/AddHeader";
 import WatchListPage from "./pages/watchlist";
-import TrackedPage from "./pages/tracked";
+import ReviewsPage from "./pages/reviews";
+import ProfilePage from "./pages/profile";
 
 const router = createBrowserRouter([
   {
@@ -56,10 +57,18 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/tracked",
+    path: "/reviews",
     element: (
       <AddHeader>
-        <TrackedPage />
+        <ReviewsPage />
+      </AddHeader>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <AddHeader>
+        <ProfilePage />
       </AddHeader>
     ),
   },

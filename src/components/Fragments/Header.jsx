@@ -31,10 +31,6 @@ const Header = () => {
   };
 
   useEffect(() => {
-    setDropdown(false);
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
       if (offset > 15) {
@@ -119,7 +115,9 @@ const Header = () => {
   return (
     <Container className={scrolled ? "scrolled" : ""}>
       <Logo>
-        <img src="/images/virtuo.png" alt="virtuo" />
+        <Link to="/home">
+          <img src="/images/virtuo.png" alt="virtuo" />
+        </Link>
       </Logo>
       {!userName ? (
         <>
@@ -132,12 +130,12 @@ const Header = () => {
               <img src="/images/home-icon.svg" alt="home" />
               <span>HOME</span>
             </Link>
-            <Link to="/tracked">
+            <Link to="/reviews">
               <img src="/images/original-icon.svg" alt="watchlist" />
               <span>REVIEWS</span>
             </Link>
             <Link to="/watchlist">
-              <img src="/images/iswatchlist.png" alt="watchlist" />
+              <img src="/images/watching.png" alt="watchlist" />
               <span>WATCHLIST</span>
             </Link>
           </NavMenu>
@@ -145,10 +143,7 @@ const Header = () => {
             <SearchComponent />
             <UserImg onClick={handleDropdown} src={userPhoto} alt={userName} />
             {dropdown && (
-              <DropDown
-                onMouseLeave={() => setDropdown(false)}
-                onPointerLeave={() => setDropdown(false)}
-              >
+              <DropDown onMouseLeave={() => setDropdown(false)}>
                 <Link
                   to="/profile"
                   onClick={handleDropdown}
@@ -157,12 +152,12 @@ const Header = () => {
                   <img src="/images/group-icon.png" alt="watchlist" />
                   <p>PROFILE</p>
                 </Link>
-                <Link to="/tracked" onClick={handleDropdown} className="menu">
-                  <img src="/images/original-icon.svg" alt="tracked" />
+                <Link to="/reviews" onClick={handleDropdown} className="menu">
+                  <img src="/images/original-icon.svg" alt="reviews" />
                   <p>REVIEWS</p>
                 </Link>
                 <Link to="/watchlist" onClick={handleDropdown} className="menu">
-                  <img src="/images/iswatchlist.png" alt="watchlist" />
+                  <img src="/images/watching.png" alt="watchlist" />
                   <p>WATCHLIST</p>
                 </Link>
                 <span className="logout" onClick={handleAuth}>
@@ -200,7 +195,7 @@ const Container = styled.nav`
     backdrop-filter: blur(10px);
   }
 `;
-const Logo = styled.a`
+const Logo = styled.div`
   padding: 0;
   width: 64px;
   font-size: 0;

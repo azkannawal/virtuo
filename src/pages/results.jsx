@@ -52,6 +52,8 @@ const Container = styled.div`
   display: block;
   position: relative;
   padding: 60px calc(3.5vw + 5px) 10px;
+  min-height: 100vh;
+  height: 100%;
 
   &:after {
     background: url("/images/home-background.png") center center / cover

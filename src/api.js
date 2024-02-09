@@ -18,7 +18,6 @@ export const postRating = async (id, rating, session) => {
       console.error(error);
     });
 };
-
 export const deleteRating = async (id, session) => {
   const options = {
     method: "DELETE",
@@ -34,7 +33,6 @@ export const deleteRating = async (id, session) => {
       console.error(error);
     });
 };
-
 export const getRating = async (session, callback) => {
   const options = {
     method: "GET",
@@ -49,7 +47,6 @@ export const getRating = async (session, callback) => {
       console.error(error);
     });
 };
-
 export const getGuest = async (callback) => {
   const options = {
     method: "GET",
@@ -64,14 +61,12 @@ export const getGuest = async (callback) => {
       console.error(error);
     });
 };
-
 export const searchMovie = async (q) => {
   const search = await axios.get(
     `${url}/search/movie?query=${q}&api_key=${apiKey}`
   );
   return search.data;
 };
-
 export const getTrailer = async (id, callback) => {
   await axios
     .get(`${url}/movie/${id}/videos?api_key=${apiKey}`)
@@ -82,7 +77,6 @@ export const getTrailer = async (id, callback) => {
       console.error(err);
     });
 };
-
 export const getDetailMovie = async (id, callback) => {
   await axios
     .get(`${url}/movie/${id}?api_key=${apiKey}`)
@@ -93,7 +87,6 @@ export const getDetailMovie = async (id, callback) => {
       console.error(err);
     });
 };
-
 export const getNewRelease = async (callback) => {
   await axios
     .get(`${url}/movie/now_playing?api_key=${apiKey}`)
@@ -104,7 +97,6 @@ export const getNewRelease = async (callback) => {
       console.error(error);
     });
 };
-
 export const getTopRated = async (callback) => {
   await axios
     .get(`${url}/movie/top_rated?api_key=${apiKey}`)
@@ -115,7 +107,6 @@ export const getTopRated = async (callback) => {
       console.error(error);
     });
 };
-
 export const getPopular = async (callback) => {
   const options = {
     method: "GET",

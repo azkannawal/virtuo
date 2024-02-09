@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import "../InputReview.css";
+import { useEffect, useState } from "react";
 import {
   selectGuestSessionId,
   selectUserUID,
@@ -11,7 +12,7 @@ import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
 const database = getDatabase(app);
 
-const InputTracked = () => {
+const InputReview = () => {
   const { id } = useParams();
   const user = useSelector(selectUserUID);
   const session = useSelector(selectGuestSessionId);
@@ -110,30 +111,21 @@ const InputTracked = () => {
       });
   };
 
-  const handleReview = () => {
-    if (review) {
-      setReview(false);
-    } else {
-      setReview(true);
-    }
-  };
-
   useEffect(() => {
     getRating(session, (data) => {
       const ratingWithId = data.find((item) => item.id == id);
-      setShowRating(ratingWithId);
       setRatingUpdated(false);
-      console.log(ratingWithId);
     });
   }, [ratingUpdated]);
 
   const handleAddRating = async () => {
     await postRating(id, rating, session);
     getRating(session, (data) => {
-      setRatingUpdated(true);
       const ratingWithId = data.find((item) => item.id === id);
       setShowRating(ratingWithId);
+      setRatingUpdated(true);
     });
+    setRating(0);
   };
 
   const handleRatingChange = (event) => {
@@ -161,11 +153,18 @@ const InputTracked = () => {
     setReview(false);
   };
 
+  const handleReview = () => {
+    if (review) {
+      setReview(false);
+    } else {
+      setReview(true);
+    }
+  };
+
   return (
-    <div>
+    <Container>
       {review ? (
         <Wrap>
-          <button onClick={handleReview}>Close</button>
           <StarRatingDiv>
             {[...Array(10)].map((Star, i) => {
               const ratingValue = i + 1;
@@ -180,7 +179,6 @@ const InputTracked = () => {
                   />
                   <div
                     id="star"
-                    size={50}
                     onMouseEnter={() => setHover(ratingValue)}
                     onMouseLeave={() => setHover(null)}
                     className={
@@ -193,73 +191,178 @@ const InputTracked = () => {
           </StarRatingDiv>
           {!editing && existNote.length === 0 && (
             <>
-              <input
-                type="text"
-                placeholder="Write your note"
+              <textarea
+                rows={5}
+                placeholder="Write your review"
                 value={note}
                 onChange={handleInputChange}
               />
-              <button onClick={handleSave}>Save</button>
+              <Control>
+                <Button onClick={handleSave}>Save</Button>
+                <DeleteButton onClick={handleReview}>Close</DeleteButton>
+              </Control>
             </>
           )}
           {editing && (
             <>
-              <input
-                type="text"
-                placeholder="Edit your note"
+              <textarea
+                rows={5}
+                placeholder="Edit your review"
                 value={note}
                 onChange={handleInputChange}
               />
-              <button onClick={handleSave}>Update</button>
+              <Control>
+                <Button onClick={handleSave}>Update</Button>
+                <DeleteButton onClick={handleReview}>Close</DeleteButton>
+              </Control>
             </>
           )}
         </Wrap>
       ) : (
         <>
-          {showRating && <div>{showRating.rating}</div>}
           {existNote.map((item) => (
-            <div key={item.id}>
-              <p>{item.note}</p>
-              <button onClick={() => handleEdit(item.id)}>Edit</button>
-              <button onClick={() => handleDelete(item.id)}>Delete</button>
-            </div>
+            <Wrap key={item.id}>
+              <Rating>
+                <Note>Rating:</Note>
+                {showRating && (
+                  <StarRatingDiv>
+                    {[...Array(showRating.rating)].map((_, i) => {
+                      return (
+                        <label key={i}>
+                          <div id="star" className="activeStar"></div>
+                        </label>
+                      );
+                    })}
+                  </StarRatingDiv>
+                )}
+                {!showRating && (
+                  <NoStarRatingDiv>
+                    {[...Array(10)].map((_, i) => {
+                      return (
+                        <label key={i}>
+                          <div id="star" className="star"></div>
+                        </label>
+                      );
+                    })}
+                  </NoStarRatingDiv>
+                )}
+              </Rating>
+              <Note>Review:</Note>
+              <Note>{item.note ? item.note : "No note "}</Note>
+              <Control>
+                <Button onClick={() => handleEdit(item.id)}>Edit</Button>
+                <DeleteButton onClick={() => handleDelete(item.id)}>
+                  Delete
+                </DeleteButton>
+              </Control>
+            </Wrap>
           ))}
           {existNote.length === 0 && (
-            <button onClick={handleReview}>Add Review</button>
+            <ReviewButton onClick={handleReview}>Add Review</ReviewButton>
           )}
         </>
       )}
-    </div>
+    </Container>
   );
 };
 
+const Container = styled.div`
+  position: relative;
+  margin: 16px 0px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+`;
 const Wrap = styled.div`
-  background: black;
+  background-color: rgba(0, 99, 229, 0.7);
+  padding: 8px 12px;
+  border-radius: 1em;
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 0.7em;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 `;
-
+const Control = styled.div`
+  gap: 12px;
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0px;
+`;
+const Rating = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+const Note = styled.p`
+  font-size: 20px;
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+`;
+const Button = styled.button`
+  padding: 12px 20px;
+  background-color: rgba(0, 0, 0);
+  border-radius: 2em;
+  outline: none;
+  border: none;
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+`;
+const DeleteButton = styled(Button)`
+  background-color: maroon;
+`;
+const ReviewButton = styled(Button)`
+  background-color: rgba(0, 99, 229);
+`;
 const StarRatingDiv = styled.div`
   .star,
   .activeStar {
     cursor: pointer;
     float: left;
-    height: 50px;
-    width: 50px;
+    height: 35px;
+    width: 35px;
     background: url("/images/original-icon.svg");
     background-repeat: no-repeat;
     background-size: 100%;
     filter: invert(100%) sepia(3%) saturate(123%) hue-rotate(60deg)
       brightness(115%) contrast(84%);
+    @media (max-width: 768px) {
+      height: 24px;
+      width: 24px;
+    }
+    @media (max-width: 480px) {
+      height: 18px;
+      width: 18px;
+    }
   }
   .activeStar {
-    filter: invert(80%) sepia(59%) saturate(2087%) hue-rotate(352deg)
-      brightness(107%) contrast(109%);
+    filter: invert(0%) sepia(0%) saturate(5000%) hue-rotate(354deg)
+      brightness(104%) contrast(150%);
   }
   input[type="radio"] {
     display: none;
   }
 `;
+const NoStarRatingDiv = styled(StarRatingDiv)`
+  animation: loading 1.5s infinite;
+  @keyframes loading {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
+`;
 
-export default InputTracked;
+export default InputReview;

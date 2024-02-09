@@ -2,13 +2,15 @@ import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { auth, provider } from "../config/firebase";
-import { selectUserName } from "../features/user/userSlice";
-import { useSelector } from "react-redux";
+import { selectUserName, setGuestSessionId } from "../features/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { getGuest } from "../api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const userName = useSelector(selectUserName);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
@@ -19,29 +21,53 @@ const LoginPage = () => {
   }, [userName]);
 
   const handleAuth = async () => {
-    try {
-      await signInWithPopup(auth, provider).then((result) => {
-        result.user;
-      });
-    } catch (err) {
-      console.error(err);
+    if (!userName) {
+      try {
+        await signInWithPopup(auth, provider).then(() => {
+          navigate("/home");
+        });
+      } catch (err) {
+        console.error(err);
+      }
     }
+  };
+
+  const handleSession = () => {
+    const guestSessionId = localStorage.getItem("guestSessionId");
+    if (!guestSessionId) {
+      getGuest((data) => {
+        dispatch(setGuestSessionId(data.guest_session_id));
+        localStorage.setItem("guestSessionId", data.guest_session_id);
+      });
+    }
+  };
+
+  useEffect(() => {
+    const storedGuestSessionId = localStorage.getItem("guestSessionId");
+    if (storedGuestSessionId) {
+      dispatch(setGuestSessionId(storedGuestSessionId));
+    }
+  }, []);
+
+  const handleAll = () => {
+    handleAuth();
+    handleSession();
   };
 
   return (
     <Container>
       <Content>
-        <CTA>
-          <CTALogoOne src="/images/virtuotext.svg" alt="" />
+        <Wrap>
+          <Logo src="/images/virtuotext.svg" alt="" />
           <Description>
             {" "}
             Track films you’ve watched. Save those you want to see. Keep a diary
             of your film watching.
           </Description>
-          <SignUp onClick={handleAuth}>GET STARTED</SignUp>
-          <CTALogoTwo src="/images/movieprovider.png" alt="" />
-        </CTA>
-        <BgImage />
+          <Button onClick={handleAll}>GET STARTED</Button>
+          <Provider src="/images/movieprovider.png" alt="" />
+        </Wrap>
+        <Backdrop />
       </Content>
     </Container>
   );
@@ -66,7 +92,7 @@ const Content = styled.div`
   padding: 80px 40px;
   height: 100%;
 `;
-const BgImage = styled.div`
+const Backdrop = styled.div`
   height: 100%;
   background-position: top;
   background-size: cover;
@@ -78,7 +104,7 @@ const BgImage = styled.div`
   left: 0;
   z-index: -1;
 `;
-const CTA = styled.div`
+const Wrap = styled.div`
   max-width: 750px;
   display: flex;
   flex-direction: column;
@@ -88,17 +114,17 @@ const CTA = styled.div`
   transition: opacity 0.2s;
   width: 100%;
 `;
-const CTALogoOne = styled.img`
+const Logo = styled.img`
   margin: 0 0 12px;
   max-width: 660px;
   width: 100%;
 `;
-const CTALogoTwo = styled.img`
+const Provider = styled.img`
   margin: 0;
   max-width: 650px;
   width: 100%;
 `;
-const SignUp = styled.a`
+const Button = styled.a`
   max-width: 650px;
   font-weight: bold;
   color: #f9f9f9;

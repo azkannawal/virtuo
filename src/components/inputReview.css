@@ -1,0 +1,11 @@
+textarea{
+    resize: none;
+    background-color: transparent;
+    outline: none;
+    font-family: sans-serif;
+    font-size: 20px;
+    border: none;
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
+}

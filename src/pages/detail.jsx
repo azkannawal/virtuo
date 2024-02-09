@@ -6,8 +6,8 @@ import { getDetailMovie, getTrailer } from "../api";
 import { selectUserUID } from "../features/user/userSlice";
 import { useSelector } from "react-redux";
 import { getDatabase, ref, push, child, remove, get } from "firebase/database";
-import InputTracked from "./../components/Fragments/InputTracked";
 import useLogin from "../hooks/useLogin";
+import InputReview from "../components/Fragments/InputReview";
 const database = getDatabase(app);
 
 const DetailPage = () => {
@@ -28,7 +28,6 @@ const DetailPage = () => {
   useEffect(() => {
     getDetailMovie(id, (data) => {
       setDetail(data);
-      console.log(data);
     });
   }, [id]);
 
@@ -181,7 +180,7 @@ const DetailPage = () => {
               {inList ? (
                 <AddList
                   onClick={handleDeleteFromList}
-                  style={{ backgroundColor: "#078000" }}
+                  style={{ backgroundColor: "#0063e5" }}
                 >
                   <img src="/images/watchlist.png" alt="watchlist" />
                 </AddList>
@@ -191,12 +190,8 @@ const DetailPage = () => {
                 </AddList>
               )}
             </Controls>
-            {/* <Rating>
-              <img src="/images/rating.svg" alt="" />
-              <span>{`${parseFloat(detail.vote_average).toFixed(1)}/10`}</span>
-            </Rating> */}
             <Description>{detail.overview}</Description>
-            <InputTracked />
+            <InputReview />
           </Wrap>
         </Content>
       </Container>
@@ -324,7 +319,7 @@ const Player = styled.button`
   }
 `;
 const Trailer = styled(Player)`
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgb(249, 249, 249);
   color: rgb(249, 249, 249);
 `;
@@ -334,9 +329,9 @@ const AddList = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.4);
   border-radius: 50%;
-  border: 2px solid white;
+  border: 1px solid white;
   cursor: pointer;
   transform: scale(1.1);
   transition: all 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
@@ -348,8 +343,7 @@ const AddList = styled.button`
 const Description = styled.div`
   line-height: 1.4;
   font-size: 20px;
-  margin: 16px 0px;
-  max-width: 1/2vw;
+  margin: 16px 0px 0px 0px;
   color: rgb(249, 249, 249);
 
   @media (max-width: 768px) {

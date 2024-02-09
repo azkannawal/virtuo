@@ -3,10 +3,10 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { selectUserUID } from './../../features/user/userSlice';
-import app from './../../config/firebase';
+import { selectUserUID } from "./../../features/user/userSlice";
+import app from "./../../config/firebase";
 
-const AddMovie = ({path, title}) => {
+const AddMovie = ({ path, title }) => {
   const [movies, setMovies] = useState([]);
   const user = useSelector(selectUserUID);
 
@@ -33,16 +33,19 @@ const AddMovie = ({path, title}) => {
     <Container>
       <h3>{title}</h3>
       <Content>
-        {movies.slice().reverse().map((item) => (
-          <Wrap key={item.id}>
-            <Link to={`/detail/${item.id}`}>
-              <img
-                src={`https://image.tmdb.org/t/p/w500/${item.poster}`}
-                alt={item.title}
-              />
-            </Link>
-          </Wrap>
-        ))}
+        {movies
+          .slice()
+          .reverse()
+          .map((item) => (
+            <Wrap key={item.id}>
+              <Link to={`/detail/${item.id}`}>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500/${item.poster}`}
+                  alt={item.title}
+                />
+              </Link>
+            </Wrap>
+          ))}
       </Content>
     </Container>
   );
@@ -50,14 +53,15 @@ const AddMovie = ({path, title}) => {
 
 const Container = styled.div`
   padding: 75px calc(3.5vw + 5px);
-  min-height: calc(100vh - 250px);
+  min-height: 100vh;
+  height: 100%;
   overflow-x: hidden;
   display: block;
   position: relative;
 
   &:after {
-    background: url("/images/home-background.png") center center / cover
-    no-repeat fixed;
+    background: url("/images/home-background.png") center center / cover repeat
+      fixed;
     content: "";
     position: absolute;
     inset: 0px;
