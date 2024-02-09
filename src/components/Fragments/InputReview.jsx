@@ -114,6 +114,7 @@ const InputReview = () => {
   useEffect(() => {
     getRating(session, (data) => {
       const ratingWithId = data.find((item) => item.id == id);
+      setShowRating(ratingWithId);
       setRatingUpdated(false);
     });
   }, [ratingUpdated]);
