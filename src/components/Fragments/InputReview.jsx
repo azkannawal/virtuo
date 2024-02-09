@@ -1,4 +1,4 @@
-import "../InputReview.css";
+import "./InputReview.css";
 import { useEffect, useState } from "react";
 import {
   selectGuestSessionId,
