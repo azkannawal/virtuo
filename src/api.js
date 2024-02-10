@@ -12,7 +12,7 @@ export const postRating = async (id, rating, session) => {
   await axios
     .request(options)
     .then(function (response) {
-      console.log(response.data);
+      response.data
     })
     .catch(function (error) {
       console.error(error);
@@ -27,10 +27,10 @@ export const deleteRating = async (id, session) => {
   await axios
     .request(options)
     .then(function (response) {
-      console.log(response.data);
+      response.data
     })
     .catch(function (error) {
-      console.error(error);
+    console.error(error);
     });
 };
 export const getRating = async (session, callback) => {

@@ -43,7 +43,6 @@ const InputReview = () => {
             const archive = child.find((data) => data.id === detail.id);
             if (archive) {
               setExistNote([archive]);
-              console.log(archive);
             } else {
               setExistNote([]);
             }
@@ -74,7 +73,6 @@ const InputReview = () => {
       const path = ref(database, `users/${user}/notes/${detail.id}`);
       set(path, objectData)
         .then(() => {
-          console.log("Success");
           setNote("");
           setEditing(false);
         })
