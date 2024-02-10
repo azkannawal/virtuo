@@ -8,6 +8,7 @@ import Slider from "react-slick";
 const MovieList = ({ title, getMovies }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [wait, setWait] = useState(true);
 
   useEffect(() => {
     getMovies((data) => {
@@ -18,6 +19,7 @@ const MovieList = ({ title, getMovies }) => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
+      setWait(false);
     }, 1500);
   }, []);
 
@@ -48,23 +50,28 @@ const MovieList = ({ title, getMovies }) => {
     <Container>
       <h3>{title}</h3>
       <Caraousel {...settings}>
-        {loading
-          ? Array.from({ length: 18 }).map((_, index) => (
-              <LoadingWrap key={index}>
-                <img src="/images/posterloading.png" alt="" />
-              </LoadingWrap>
-            ))
-          : movies.slice(0, 18).map((item) => (
-              <Wrap key={item.id}>
-                <Link to={`/detail/${item.id}`}>
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500/${item.poster_path}`}
-                    alt={item.title}
-                    onLoad={() => setLoading(false)}
-                  />
-                </Link>
-              </Wrap>
-            ))}
+        {loading &&
+          Array.from({ length: 18 }).map((_, index) => (
+            <LoadingWrap key={index}>
+              <img src="/images/loading.png" alt="" />
+            </LoadingWrap>
+          ))}
+        {movies.slice(0, 18).map((item) => (
+          <Wrap
+            style={{
+              display: `${wait ? "none" : ""}`,
+            }}
+            key={item.id}
+          >
+            <Link to={`/detail/${item.id}`}>
+              <img
+                src={`https://image.tmdb.org/t/p/w500/${item.poster_path}`}
+                alt={item.title}
+                onLoad={() => setLoading(false)}
+              />
+            </Link>
+          </Wrap>
+        ))}
       </Caraousel>
     </Container>
   );
@@ -130,7 +137,7 @@ const LoadingWrap = styled.div`
   }
   img {
     width: 100%;
-    opacity: 0;
+    opacity: 0.2;
     transition: opacity 500ms ease-in-out 0s;
     border-radius: 6px;
   }

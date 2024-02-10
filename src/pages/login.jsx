@@ -4,13 +4,16 @@ import styled from "styled-components";
 import { auth, provider } from "../config/firebase";
 import { selectUserName, setGuestSessionId } from "../features/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getGuest } from "../api";
+import Loading from "../components/Fragments/Loading";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const userName = useSelector(selectUserName);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  const [wait, setWait] = useState(true);
 
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
@@ -54,22 +57,36 @@ const LoginPage = () => {
     handleSession();
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+      setWait(false);
+    }, 2000);
+  }, []);
+
   return (
-    <Container>
-      <Content>
-        <Wrap>
-          <Logo src="/images/virtuotext.svg" alt="" />
-          <Description>
-            {" "}
-            Track films you’ve watched. Save those you want to see. Keep a diary
-            of your film watching.
-          </Description>
-          <Button onClick={handleAll}>GET STARTED</Button>
-          <Provider src="/images/movieprovider.png" alt="" />
-        </Wrap>
-        <Backdrop />
-      </Content>
-    </Container>
+    <>
+      {loading && <Loading />}
+      <Container
+        style={{
+          display: `${wait ? "none" : "block"}`,
+        }}
+      >
+        <Content>
+          <Wrap>
+            <Logo src="/images/virtuotext.svg" alt="" />
+            <Description>
+              {" "}
+              Rate films you’ve watched. Save those you want to see. Keep a
+              review of your film watching.
+            </Description>
+            <Button onClick={handleAll}>GET STARTED</Button>
+            <Provider src="/images/movieprovider.png" alt="" />
+          </Wrap>
+          <Backdrop />
+        </Content>
+      </Container>
+    </>
   );
 };
 
@@ -140,11 +157,16 @@ const Button = styled.a`
   }
 `;
 const Description = styled.p`
-  max-width: 650px;
+  max-width: 800px;
   color: hsla(0, 0%, 95.3%, 1);
-  font-size: 14px;
-  margin: 0 0 12px;
+  font-size: 18px;
+  margin: 0 0 24px;
   line-height: 1.5;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    max-width: 650px;
+  }
 `;
 
 export default LoginPage;

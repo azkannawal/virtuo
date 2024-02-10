@@ -4,7 +4,7 @@ import useLogin from "../hooks/useLogin";
 
 const ReviewsPage = () => {
   useLogin();
-  return <AddMovie path="notes" title="Your Movies Review"/>;
+  return <AddMovie path="notes" title="Your Reviews" />;
 };
 
 export default ReviewsPage;

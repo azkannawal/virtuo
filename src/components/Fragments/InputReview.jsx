@@ -166,30 +166,33 @@ const InputReview = () => {
     <Container>
       {review ? (
         <Wrap>
-          <StarRatingDiv>
-            {[...Array(10)].map((Star, i) => {
-              const ratingValue = i + 1;
-              return (
-                <label key={i}>
-                  <input
-                    type="radio"
-                    name="rating"
-                    value={ratingValue}
-                    onClick={() => setRating(ratingValue)}
-                    onChange={handleRatingChange}
-                  />
-                  <div
-                    id="star"
-                    onMouseEnter={() => setHover(ratingValue)}
-                    onMouseLeave={() => setHover(null)}
-                    className={
-                      ratingValue <= (hover || rating) ? "activeStar" : "star"
-                    }
-                  ></div>
-                </label>
-              );
-            })}
-          </StarRatingDiv>
+          <Rating>
+            <Note>Rating:</Note>
+            <StarRatingDiv>
+              {[...Array(10)].map((Star, i) => {
+                const ratingValue = i + 1;
+                return (
+                  <label key={i}>
+                    <input
+                      type="radio"
+                      name="rating"
+                      value={ratingValue}
+                      onClick={() => setRating(ratingValue)}
+                      onChange={handleRatingChange}
+                    />
+                    <div
+                      id="star"
+                      onMouseEnter={() => setHover(ratingValue)}
+                      onMouseLeave={() => setHover(null)}
+                      className={
+                        ratingValue <= (hover || rating) ? "activeStar" : "star"
+                      }
+                    ></div>
+                  </label>
+                );
+              })}
+            </StarRatingDiv>
+          </Rating>
           {!editing && existNote.length === 0 && (
             <>
               <textarea
@@ -327,8 +330,8 @@ const StarRatingDiv = styled.div`
   .activeStar {
     cursor: pointer;
     float: left;
-    height: 35px;
-    width: 35px;
+    height: 30px;
+    width: 30px;
     background: url("/images/original-icon.svg");
     background-repeat: no-repeat;
     background-size: 100%;

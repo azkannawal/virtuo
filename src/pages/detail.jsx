@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { getDatabase, ref, push, child, remove, get } from "firebase/database";
 import useLogin from "../hooks/useLogin";
 import InputReview from "../components/Fragments/InputReview";
+import Loading from "../components/Fragments/Loading";
 const database = getDatabase(app);
 
 const DetailPage = () => {
@@ -15,15 +16,20 @@ const DetailPage = () => {
   const [detail, setDetail] = useState({});
   const [trailer, setTrailer] = useState({});
   const [inList, setInList] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [wait, setWait] = useState(true);
   const user = useSelector(selectUserUID);
   const year = new Date(detail.release_date).getFullYear().toString();
   const duration = Math.floor(detail.runtime / 60);
   const remaining = detail.runtime % 60;
-  const votecount =
-    detail.vote_count >= 1000
-      ? (detail.vote_count / 1000).toFixed(1) + "K"
-      : detail.vote_count;
   useLogin();
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+      setWait(false);
+    }, 1500);
+  }, []);
 
   useEffect(() => {
     getDetailMovie(id, (data) => {
@@ -133,7 +139,12 @@ const DetailPage = () => {
         alignItems: "center",
       }}
     >
-      <Container>
+      {loading && <Loading />}
+      <Container
+        style={{
+          display: `${wait ? "none" : "block"}`,
+        }}
+      >
         <Backdrop>
           <img
             src={`https://image.tmdb.org/t/p/w1280/${detail.backdrop_path}`}

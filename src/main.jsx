@@ -12,7 +12,7 @@ import NotFoundPage from "./pages/notfound";
 import AddHeader from "./components/Layouts/AddHeader";
 import WatchListPage from "./pages/watchlist";
 import ReviewsPage from "./pages/reviews";
-import ProfilePage from "./pages/profile";
+import ProfilePage from "./pages/profile"; 
 
 const router = createBrowserRouter([
   {
